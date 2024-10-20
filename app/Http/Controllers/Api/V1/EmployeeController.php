@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\EmployeeSituation;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\EmployeeResource;
 use App\Models\Employee;
 use App\Traits\HttpResponse;
-use App\Utils\CpfFormatter;
+use App\Utils\Cpf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,12 +23,12 @@ use HttpResponse;
     public function store(Request $request)
     {
         $request->merge([
-            'cpf' => CpfFormatter::unformat($request->cpf),
+            'cpf' => Cpf::unformat($request->cpf),
         ]);
 
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'cpf' => 'required|size:11|unique:employees',
+            'cpf' => ['required',new \App\Rules\Cpf(),'unique:employees'],
         ]);
 
         if ($validator->fails()) {
@@ -35,6 +36,7 @@ use HttpResponse;
         }
 
         $employee = Employee::create($validator->validated());
+        $employee->situation = (EmployeeSituation::Active)->value;
         if($employee){
             return $this->response('Funcionário Criado', 201, new EmployeeResource($employee));
         }

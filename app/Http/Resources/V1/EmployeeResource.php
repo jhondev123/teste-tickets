@@ -5,7 +5,7 @@ namespace App\Http\Resources\V1;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Utils\CpfFormatter;
+use App\Utils\Cpf;
 class EmployeeResource extends JsonResource
 {
     /**
@@ -19,7 +19,7 @@ class EmployeeResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'cpf' => CpfFormatter::format($this->cpf),
+            'cpf' => Cpf::format($this->cpf),
             'situation' => $situations[$this->situation],
             'created_at' => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
             'updated_at' => Carbon::parse($this->updated_at_)->format('d/m/Y H:i:s'),
