@@ -1,0 +1,11 @@
+services:
+    pgsql:
+        image: postgres:13
+        container_name: pgsql
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - "5432:5432"
+

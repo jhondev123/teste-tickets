@@ -1,0 +1,77 @@
+name: Laravel CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Create Database
+        run: |
+          touch database/database.sqlite
+
+      - name: Configure Database
+        run: |
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=${{ github.workspace }}/database/database.sqlite" >> .env
+
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Run NPM production
+        run: npm run build
+
+
+      - name: Execute tests via Artisan
+        run: php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Clear application cache
+        run: php artisan cache:clear
+
+      - name: Trigger CapRover deployment
+        run: |
+          curl -X POST "${{ secrets.WEBHOOK_URL }}"
