@@ -19,7 +19,7 @@ class ReportController extends Controller
     public function searchTicketsByEmployeeAndPeriod(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'employee_id' => 'required|integer',
+            'employee_id' => 'nullable|integer|exists:employees,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
         ]);
@@ -28,37 +28,21 @@ class ReportController extends Controller
             return $this->response($validator->errors(), 400);
         }
         $dto = new SearchTicketByEmployeeAndPeriodDTO(
-            $request->employee_id,
             $request->start_date,
-            $request->end_date
+            $request->end_date,
+            $request->employee_id ?? null,
+
         );
 
         $tickets = SearchTicketsByEmployeeAndPeriodAction::execute($dto);
 
 
         return $this->response('Tickets',200, TicketResource::collection($tickets));
-
     }
 
-    public function searchAllTicketsByPeriod(Request $request)
+    public function generateReportSearchTickets()
     {
-        $validator = Validator::make($request->all(), [
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->response($validator->errors(), 400);
-        }
-        $dto = new SearchTicketsByPeriodDTO(
-            $request->start_date,
-            $request->end_date
-        );
-
-        $tickets = SearchTicketsByPeriodAction::execute($dto);
-
-
-        return $this->response('Tickets',200, TicketResource::collection($tickets));
 
     }
+
 }

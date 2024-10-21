@@ -9,8 +9,10 @@ class SearchTicketsByEmployeeAndPeriodAction
 {
     public static function execute(SearchTicketByEmployeeAndPeriodDTO $dto)
     {
-        return Ticket::where('employee_id', $dto->employee_id)
-            ->whereBetween('created_at', [$dto->start_date, $dto->end_date])
-            ->get();
+        $query = Ticket::whereBetween('created_at', [$dto->start_date, $dto->end_date]);
+        if ($dto->employee_id) {
+            $query->where('employee_id', $dto->employee_id);
+        }
+        return $query->get();
     }
 }
