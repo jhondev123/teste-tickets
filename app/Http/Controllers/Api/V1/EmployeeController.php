@@ -74,7 +74,7 @@ class EmployeeController extends Controller
     /**
      * @OA\Get(
      *     path="/api/v1/employees",
-     *     tags={"Employees"},
+     *     tags={"Funcionários"},
      *     summary="Busca todos os funcionários",
      *     @OA\Response(
      *         response=200,
@@ -88,13 +88,13 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        return EmployeeResource::collection(Employee::all());
+        return EmployeeResource::collection(Employee::with('tickets')->get());
     }
 
     /**
      * @OA\Post(
      *     path="/api/v1/employees",
-     *     tags={"Employees"},
+     *     tags={"Funcionários"},
      *     summary="Cria um novo funcionário",
      *     @OA\RequestBody(
      *         required=true,
@@ -151,7 +151,7 @@ class EmployeeController extends Controller
     /**
      * @OA\Get(
      *     path="/api/v1/employees/{id}",
-     *     tags={"Employees"},
+     *     tags={"Funcionários"},
      *     summary="Busca o funcionário pelo código",
      *     @OA\Parameter(
      *         name="id",
@@ -182,7 +182,7 @@ class EmployeeController extends Controller
     /**
      * @OA\Put(
      *     path="/api/v1/employees/{id}",
-     *     tags={"Employees"},
+     *     tags={"Funcionários"},
      *     summary="Atualiza o funcionário",
      *     @OA\Parameter(
      *         name="id",
@@ -241,7 +241,7 @@ class EmployeeController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/v1/employees/{id}",
-     *     tags={"Employees"},
+     *     tags={"Funcionários"},
      *     summary="Deleta um funcionário",
      *     @OA\Parameter(
      *         name="id",

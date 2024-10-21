@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Employee API",
+        "title": "Tickets API",
         "description": "API para gerenciamento de funcionários.",
         "contact": {
-            "email": "support@company.com"
+            "email": "jhonattan.curtarelli@outlook.com"
         },
         "version": "1.0.0"
     },
@@ -12,7 +12,7 @@
         "/api/v1/employees": {
             "get": {
                 "tags": [
-                    "Employees"
+                    "Funcionários"
                 ],
                 "summary": "Busca todos os funcionários",
                 "operationId": "326f2e86fa40a9ba88b1cb5f2d4b62b8",
@@ -34,7 +34,7 @@
             },
             "post": {
                 "tags": [
-                    "Employees"
+                    "Funcionários"
                 ],
                 "summary": "Cria um novo funcionário",
                 "operationId": "4a10b3ada27736863f2586c56b9c19ec",
@@ -103,7 +103,7 @@
         "/api/v1/employees/{id}": {
             "get": {
                 "tags": [
-                    "Employees"
+                    "Funcionários"
                 ],
                 "summary": "Busca o funcionário pelo código",
                 "operationId": "b7cb6100cedcac60d8c23d3f9d7c3251",
@@ -150,7 +150,7 @@
             },
             "put": {
                 "tags": [
-                    "Employees"
+                    "Funcionários"
                 ],
                 "summary": "Atualiza o funcionário",
                 "operationId": "bcdffcad24dd066f489c0e6ed83861a5",
@@ -225,7 +225,7 @@
             },
             "delete": {
                 "tags": [
-                    "Employees"
+                    "Funcionários"
                 ],
                 "summary": "Deleta um funcionário",
                 "operationId": "43aa0966dc246d0b0373a7db65a6bf78",
@@ -254,6 +254,263 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Erro ao deletar o funcionário"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tickets": {
+            "get": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Busca todos os tickets",
+                "operationId": "63410598a093cab144b5580f73c75839",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tickets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Ticket"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Cria um novo ticket",
+                "operationId": "64c186f3265e66b70e42d675d1821d84",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "employee_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "employee_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "situation": {
+                                        "type": "string",
+                                        "enum": [
+                                            "A",
+                                            "I"
+                                        ],
+                                        "example": "A"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ticket cadastrado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Ticket"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erros de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dados Inválidos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tickets/{id}": {
+            "get": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Busca o ticket pelo código",
+                "operationId": "f276270bce513c39d80ba96831f613c4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Código do ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados do ticket",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Ticket"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ticket não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Atualiza o ticket",
+                "operationId": "e6d92b0d6a2df06e8a397a2ff206f495",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "situation": {
+                                        "type": "string",
+                                        "enum": [
+                                            "A",
+                                            "I"
+                                        ],
+                                        "example": "A"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ticket atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Ticket"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket não encontrado"
+                    },
+                    "422": {
+                        "description": "Erros de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dados Inválidos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tickets"
+                ],
+                "summary": "Deleta um ticket",
+                "operationId": "0bb37b0cac18d58ae5df81b261a1e65d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ticket deletado com sucesso"
+                    },
+                    "404": {
+                        "description": "Ticket não encontrado"
+                    },
+                    "400": {
+                        "description": "Erro ao deletar o ticket",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erro ao deletar o ticket"
                                         }
                                     },
                                     "type": "object"
@@ -321,13 +578,72 @@
                     }
                 },
                 "type": "object"
+            },
+            "Ticket": {
+                "title": "Tickets",
+                "description": "Tickets",
+                "required": [
+                    "id",
+                    "employee_id",
+                    "quantity",
+                    "situation"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID do ticket",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "employee_id": {
+                        "description": "ID do funcionário associado ao ticket",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "description": "Quantidade de tickets",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "situation": {
+                        "description": "Situação do ticket",
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "I"
+                        ],
+                        "example": "A"
+                    },
+                    "created_at": {
+                        "description": "Data de criação do ticket",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-09-01T00:00:00"
+                    },
+                    "updated_at": {
+                        "description": "Data de atualização do ticket",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-09-01T00:00:00"
+                    },
+                    "deleted_at": {
+                        "description": "Data de exclusão do ticket",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2021-09-01T00:00:00"
+                    }
+                },
+                "type": "object"
             }
         }
     },
     "tags": [
         {
-            "name": "Employees",
-            "description": "Employees"
+            "name": "Funcionários",
+            "description": "Funcionários"
+        },
+        {
+            "name": "Tickets",
+            "description": "Tickets"
         }
     ]
 }

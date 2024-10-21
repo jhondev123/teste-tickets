@@ -23,6 +23,20 @@ class EmployeeResource extends JsonResource
             'situation' => $situations[$this->situation],
             'created_at' => Carbon::parse($this->created_at)->format('d/m/Y H:i:s'),
             'updated_at' => Carbon::parse($this->updated_at_)->format('d/m/Y H:i:s'),
+            'tickets' => [
+                'total_quantity' => $this->tickets->count(),
+                'total_actives' => $this->tickets->where('situation', 'A')->count(),
+                'total_inactives' => $this->tickets->where('situation', 'I')->count(),
+                'tickets' => $this->tickets->map(function ($ticket) {
+                    return [
+                            'id' => $ticket->id,
+                            'quantity' => $ticket->quantity,
+                            'situation' => $ticket->situation,
+                            'created_at' => Carbon::parse($ticket->created_at)->format('d/m/Y H:i:s'),
+                            'updated_at' => Carbon::parse($ticket->updated_at)->format('d/m/Y H:i:s')
+                        ];
+                    }),
+                ]
         ];
     }
 

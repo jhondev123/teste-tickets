@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained();
+            $table->foreignId('employee_id')->constrained('employees');
             $table->integer('quantity');
             $table->char('situation', 1)->default('A');
             $table->timestamp('delivery_date')->default(now());
             $table->timestamps();
-
+            $table->softDeletes();
         });
 
     }
