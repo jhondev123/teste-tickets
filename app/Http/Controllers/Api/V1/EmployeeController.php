@@ -88,7 +88,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        return EmployeeResource::collection(Employee::with('tickets')->get());
+        return EmployeeResource::collection(Employee::with('tickets')->limit(500)->get());
     }
 
     /**

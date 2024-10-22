@@ -87,7 +87,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        return TicketResource::collection(Ticket::with('employee')->get());
+        return TicketResource::collection(Ticket::with('employee')->limit(500)->get());
     }
 
     /**
