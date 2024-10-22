@@ -12,8 +12,7 @@ Route::prefix('/v1')->group(function () {
     Route::apiResource('tickets', \App\Http\Controllers\Api\V1\TicketController::class);
     Route::prefix('/reports')->group(function () {
         Route::get('tickets/by/employee/period', [\App\Http\Controllers\Api\V1\ReportController::class, 'searchTicketsByEmployeeAndPeriod']);
-        Route::get('tickets/by/period', [\App\Http\Controllers\Api\V1\ReportController::class, 'searchAllTicketsByPeriod']);
-
+        Route::post('tickets/generate', [\App\Http\Controllers\Api\V1\ReportController::class, 'generateReportSearchTickets']);
     });
 });
 

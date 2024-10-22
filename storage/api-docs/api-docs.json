@@ -264,6 +264,178 @@
                 }
             }
         },
+        "/api/v1/reports/tickets/by/employee/period": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Busca tickets por funcionário e período",
+                "operationId": "d948637ad3afe54c97b25160a56b7920",
+                "parameters": [
+                    {
+                        "name": "employee_id",
+                        "in": "query",
+                        "description": "ID do funcionário",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de tickets encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tickets"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Ticket"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "properties": {
+                                                "start_date": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The start date field is required"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reports/tickets/generate": {
+            "post": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Gera relatório PDF de tickets",
+                "description": "Gera um relatório PDF dos tickets baseado nos filtros fornecidos",
+                "operationId": "dd16e28c5a55f5f04b5e09b34b0d83c7",
+                "parameters": [
+                    {
+                        "name": "employee_id",
+                        "in": "query",
+                        "description": "ID do funcionário",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Relatório PDF gerado com sucesso",
+                        "headers": {
+                            "Content-Type": {
+                                "description": "application/pdf",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            "Content-Disposition": {
+                                "description": "attachment; filename=tickets.pdf",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "properties": {
+                                                "employee_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected employee id is invalid"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/tickets": {
             "get": {
                 "tags": [
@@ -579,6 +751,30 @@
                 },
                 "type": "object"
             },
+            "TicketReport": {
+                "title": "Ticket Report",
+                "description": "Ticket Report Response",
+                "properties": {
+                    "employee_id": {
+                        "description": "ID do funcionário",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "start_date": {
+                        "description": "Data inicial",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                    },
+                    "end_date": {
+                        "description": "Data final",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-12-31"
+                    }
+                },
+                "type": "object"
+            },
             "Ticket": {
                 "title": "Tickets",
                 "description": "Tickets",
@@ -640,6 +836,10 @@
         {
             "name": "Funcionários",
             "description": "Funcionários"
+        },
+        {
+            "name": "Relatórios",
+            "description": "Relatórios"
         },
         {
             "name": "Tickets",
