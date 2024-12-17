@@ -1,14 +1,19 @@
 <?php
+
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\EmployeeSituation;
+use App\Actions\V1\Employee\GetAllEmployeesAction;
+use App\Actions\V1\Employee\GetEmployeeByIdAction;
+use App\Actions\V1\Employee\StoreEmployeeAction;
+use App\Actions\V1\Employee\UpdateEmployeeAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Api\V1\Employee\UpdateEmployeeRequest;
 use App\Http\Resources\V1\EmployeeResource;
 use App\Models\Employee;
 use App\Traits\HttpResponse;
-use App\Utils\Cpf;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 
 /**
@@ -66,7 +71,6 @@ use OpenApi\Annotations as OA;
  *  )
  * )
  */
-
 class EmployeeController extends Controller
 {
     use HttpResponse;
@@ -86,9 +90,14 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(GetAllEmployeesAction $action): JsonResponse
     {
-        return EmployeeResource::collection(Employee::with('tickets')->limit(500)->get());
+        $employees = $action->execute();
+        return $this->response(
+            'Todos os funcionários',
+            200,
+            EmployeeResource::collection($employees)
+        );
     }
 
     /**
@@ -119,33 +128,23 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(StoreEmployeeRequest $request, StoreEmployeeAction $action): JsonResponse
     {
-        $request->merge([
-            'cpf' => Cpf::unformat($request->cpf),
-        ]);
+        try {
+            $employee = $action->execute($request);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'cpf' => ['required', new \App\Rules\Cpf(), 'unique:employees'],
-            'situation' => 'nullable|in:A',
-        ]);
+            Log::info('Funcionário cadastrado com sucesso', ['employee' => $employee]);
 
-        if ($validator->fails()) {
-            return $this->error('Dados Inválidos', 422, $validator->errors());
+            return $this->response(
+                'Funcionário cadastrado com sucesso',
+                201,
+                new EmployeeResource($employee)
+            );
+        } catch (\Exception $e) {
+            Log::error('Erro ao cadastrar o funcionário', ['error' => $e->getMessage()]);
+            return $this->error('Erro ao cadastrar o funcionário', 400,['error'=>$e->getMessage()]);
         }
 
-        $employee = Employee::create($validator->validated());
-
-        if (!$employee->situation) {
-            $employee->situation = (EmployeeSituation::Active)->value;
-        }
-
-        if ($employee) {
-            return $this->response('Funcionário Criado com sucesso', 201, new EmployeeResource($employee));
-        }
-
-        return $this->error('Erro ao Criar o Funcionário', 400);
     }
 
     /**
@@ -174,9 +173,17 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function show(Employee $employee)
+    public function show(string $employee_id,GetEmployeeByIdAction $action): JsonResponse
     {
-        return new EmployeeResource($employee);
+        $employee = $action->execute($employee_id);
+        if(!$employee){
+            return $this->error('Funcionário não encontrado', 404,['Employee not found']);
+        }
+        return $this->response(
+            'Funcionário encontrado',
+            200,
+            new EmployeeResource($employee)
+        );
     }
 
     /**
@@ -213,29 +220,28 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Employee $employee)
+    public function update(
+        UpdateEmployeeRequest $request,
+        Employee              $employee,
+        UpdateEmployeeAction  $action
+    )
     {
-        if (isset($request->cpf)) {
-            $request->merge([
-                'cpf' => Cpf::unformat($request->cpf),
-            ]);
+        try {
+            $employee = $action->execute($request, $employee);
+
+            Log::info('Funcionário editado com sucesso', ['employee' => $employee]);
+
+            return $this->response(
+                'Funcionário editado com sucesso',
+                200,
+                new EmployeeResource($employee)
+            );
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao editar o funcionário', ['error' => $e->getMessage()]);
+            return $this->error('Erro ao editar o funcionário', 400);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'nullable',
-            'cpf' => ['nullable', new \App\Rules\Cpf(), 'unique:employees'],
-            'situation' => 'nullable|in:A,I',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error('Dados Inválidos', 422, $validator->errors());
-        }
-
-        if ($employee->update($validator->validated())) {
-            return $this->response('Funcionário editado com sucesso', 200, new EmployeeResource($employee));
-        }
-
-        return $this->error('Erro ao editar o funcionário', 400);
     }
 
     /**
@@ -266,9 +272,10 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         if ($employee->delete()) {
+            Log::info('Funcionário deletado com sucesso', ['employee' => $employee]);
             return $this->response('Funcionário deletado com sucesso', 204);
         }
-
+        Log::error('Erro ao deletar o funcionário', ['employee' => $employee]);
         return $this->error('Erro ao deletar o funcionário', 400);
     }
 }

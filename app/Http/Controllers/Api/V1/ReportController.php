@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Reports\SearchTicketsByEmployeeAndPeriodAction;
-use App\Actions\Reports\SearchTicketsByPeriodAction;
+use App\Actions\V1\Reports\SearchTicketsByEmployeeAndPeriodAction;
 use App\DTO\Reports\SearchTicketByEmployeeAndPeriodDTO;
-use App\DTO\Reports\SearchTicketsByPeriodDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\TicketResource;
 use App\Interfaces\ReportGenerator;
-use App\Models\Ticket;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

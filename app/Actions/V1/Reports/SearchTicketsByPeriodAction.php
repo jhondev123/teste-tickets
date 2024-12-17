@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Reports;
+namespace App\Actions\V1\Reports;
 
 use App\DTO\Reports\SearchTicketsByPeriodDTO;
 use App\Models\Ticket;

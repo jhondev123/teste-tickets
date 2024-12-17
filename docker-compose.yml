@@ -1,6 +1,6 @@
 services:
     pgsql:
-        image: postgres:13
+        image: postgres
         container_name: pgsql
         environment:
             POSTGRES_USER: postgres

@@ -15,8 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        $employees = Employee::factory(1000)->create();
+        $employees = Employee::factory(10)->create();
         foreach ($employees as $employee) {
             Ticket::factory(1)->create(['employee_id' => $employee->id]);
         }
