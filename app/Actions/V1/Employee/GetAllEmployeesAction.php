@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class GetAllEmployeesAction
 {
-    public function __construct(private Employee $employee)
+    public function __construct(private readonly Employee $employee)
     {
 
     }

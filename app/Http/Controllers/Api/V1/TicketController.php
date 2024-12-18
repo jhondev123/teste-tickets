@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\V1\Tickets\DeleteTicketAction;
+use App\Actions\V1\Tickets\GetAllTicketsAction;
+use App\Actions\V1\Tickets\GetTicketByIdAction;
+use App\Actions\V1\Tickets\StoreTicketAction;
 use App\Enums\TicketSituation;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Tickets\StoreTicketRequest;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Annotations as OA;
 
@@ -85,9 +91,11 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(GetAllTicketsAction $action)
     {
-        return TicketResource::collection(Ticket::with('employee')->limit(500)->get());
+        $tickets = $action->execute();
+        return $this->response('Tickets listados com sucesso', 200, TicketResource::collection($tickets));
+
     }
 
     /**
@@ -118,29 +126,18 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(StoreTicketRequest $request, StoreTicketAction $action)
     {
-        $validator = Validator::make($request->all(), [
-            'employee_id' => 'required|exists:employees,id',
-            'quantity' => 'required|integer',
-            'situation' => 'nullable|in:A',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error('Dados Inválidos', 422, $validator->errors());
-        }
-
-        $ticket = Ticket::create($validator->validated());
-
-        if(!$ticket->situation){
-            $ticket->situation = (TicketSituation::Active)->value;
-        }
-
-        if($ticket){
+        try{
+            $ticket = $action->execute($request->validated());
+            Log::info('Ticket cadastrado com sucesso', ['ticket' => $ticket]);
             return $this->response('Ticket cadastrado com sucesso', 201, new TicketResource($ticket));
+        }catch (\DomainException $e){
+            Log::error("Erro ao Cadastrar um Ticket".$e->getMessage(), ['code' => $e->getCode()]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
 
-        return $this->error('Erro ao cadastrar ticket', 400);
+
     }
 
     /**
@@ -169,9 +166,14 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function show(Ticket $ticket)
+    public function show(string $tickedId,GetTicketByIdAction $action)
     {
-        return new TicketResource($ticket);
+        $ticket = $action->execute($tickedId);
+        if($ticket){
+            return $this->response('Ticket encontrado com sucesso', 200, new TicketResource($ticket));
+        }
+
+        return $this->error('Ticket não encontrado', 404);
 
     }
 
@@ -259,13 +261,17 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function destroy(Ticket $ticket)
+    public function destroy(string $ticketId, DeleteTicketAction $action)
     {
-        if($ticket->delete()){
+        try{
+            $action->execute($ticketId);
+            Log::info('Ticket deletado com sucesso', ['ticket_id' => $ticketId]);
             return $this->response('Ticket deletado com sucesso', 204);
+        }catch (\DomainException $e){
+            Log::error("Erro ao deletar um Ticket".$e->getMessage(), ['code' => $e->getCode()]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
 
-        return $this->error('Erro ao deletar ticket', 400);
-
     }
+
 }
