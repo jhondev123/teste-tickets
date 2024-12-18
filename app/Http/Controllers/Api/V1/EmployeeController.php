@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\V1\Employee\DeleteEmployeeAction;
 use App\Actions\V1\Employee\GetAllEmployeesAction;
 use App\Actions\V1\Employee\GetEmployeeByIdAction;
 use App\Actions\V1\Employee\StoreEmployeeAction;
@@ -142,7 +143,7 @@ class EmployeeController extends Controller
             );
         } catch (\Exception $e) {
             Log::error('Erro ao cadastrar o funcionário', ['error' => $e->getMessage()]);
-            return $this->error('Erro ao cadastrar o funcionário', 400,['error'=>$e->getMessage()]);
+            return $this->error('Erro ao cadastrar o funcionário', 400, ['error' => $e->getMessage()]);
         }
 
     }
@@ -173,11 +174,11 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function show(string $employee_id,GetEmployeeByIdAction $action): JsonResponse
+    public function show(string $employee_id, GetEmployeeByIdAction $action): JsonResponse
     {
         $employee = $action->execute($employee_id);
-        if(!$employee){
-            return $this->error('Funcionário não encontrado', 404,['Employee not found']);
+        if (!$employee) {
+            return $this->error('Funcionário não encontrado', 404, ['Employee not found']);
         }
         return $this->response(
             'Funcionário encontrado',
@@ -269,13 +270,15 @@ class EmployeeController extends Controller
      *     )
      * )
      */
-    public function destroy(Employee $employee)
+    public function destroy(string $employeeId, DeleteEmployeeAction $action): JsonResponse
     {
-        if ($employee->delete()) {
-            Log::info('Funcionário deletado com sucesso', ['employee' => $employee]);
+        try {
+            $action->execute($employeeId);
+            Log::info('Funcionário deletado com sucesso', ['employee' => $employeeId]);
             return $this->response('Funcionário deletado com sucesso', 204);
+        } catch (\DomainException $e) {
+            Log::error('Erro ao deletar o funcionário', ['error' => $e->getMessage()]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
-        Log::error('Erro ao deletar o funcionário', ['employee' => $employee]);
-        return $this->error('Erro ao deletar o funcionário', 400);
     }
 }
