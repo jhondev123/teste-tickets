@@ -3,8 +3,9 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-abstract class ApiTestCase extends TestCase
+abstract class TestCase extends BaseTestCase
 {
     use RefreshDatabase;
 
@@ -12,8 +13,5 @@ abstract class ApiTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->withHeaders([
-            'Accept' => 'application/json',
-        ]);
     }
 }
