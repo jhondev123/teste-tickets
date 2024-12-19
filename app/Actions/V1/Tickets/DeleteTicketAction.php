@@ -11,6 +11,11 @@ class DeleteTicketAction
 
     }
 
+    /**
+     * @param string $ticketId
+     * @return bool
+     * Deleta um ticket pelo ID
+     */
     public function execute(string $ticketId):bool
     {
         $ticket = $this->ticket->find($ticketId);

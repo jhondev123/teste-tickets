@@ -8,12 +8,18 @@ use App\Models\Ticket;
 
 class StoreTicketAction
 {
-    public function __construct(private Ticket $ticket)
+    public function __construct(private readonly Ticket $ticket)
     {
 
     }
 
-    public function execute(StoreTicketRequest $request)
+    /**
+     * @param StoreTicketRequest $request
+     * @return Ticket
+     * Cadastra um novo ticket pegando os dados da requisição já validados
+     *
+     */
+    public function execute(StoreTicketRequest $request): Ticket
     {
         $dataValidated = $request->validated();
         if (!isset($dataValidated['situation'])) {

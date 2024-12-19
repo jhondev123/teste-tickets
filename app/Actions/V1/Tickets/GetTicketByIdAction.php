@@ -13,6 +13,12 @@ class GetTicketByIdAction
 
 
 
+    /**
+     * @param string $ticketId
+     * @return Ticket|null
+     * Busca um ticket pelo ID
+     *
+     */
     public function execute(string $ticketId):Ticket|null
     {
         return $this->ticket->find($ticketId);

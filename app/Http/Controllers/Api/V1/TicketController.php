@@ -6,15 +6,14 @@ use App\Actions\V1\Tickets\DeleteTicketAction;
 use App\Actions\V1\Tickets\GetAllTicketsAction;
 use App\Actions\V1\Tickets\GetTicketByIdAction;
 use App\Actions\V1\Tickets\StoreTicketAction;
-use App\Enums\TicketSituation;
+use App\Actions\V1\Tickets\UpdateTicketByIdAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Tickets\StoreTicketRequest;
+use App\Http\Requests\Api\V1\Tickets\UpdateTicketRequest;
 use App\Http\Resources\V1\TicketResource;
-use App\Models\Ticket;
 use App\Traits\HttpResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use OpenApi\Annotations as OA;
 
 /**
@@ -91,7 +90,7 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function index(GetAllTicketsAction $action)
+    public function index(GetAllTicketsAction $action):JsonResponse
     {
         $tickets = $action->execute();
         return $this->response('Tickets listados com sucesso', 200, TicketResource::collection($tickets));
@@ -126,14 +125,14 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function store(StoreTicketRequest $request, StoreTicketAction $action)
+    public function store(StoreTicketRequest $request, StoreTicketAction $action):JsonResponse
     {
-        try{
-            $ticket = $action->execute($request->validated());
+        try {
+            $ticket = $action->execute($request);
             Log::info('Ticket cadastrado com sucesso', ['ticket' => $ticket]);
             return $this->response('Ticket cadastrado com sucesso', 201, new TicketResource($ticket));
-        }catch (\DomainException $e){
-            Log::error("Erro ao Cadastrar um Ticket".$e->getMessage(), ['code' => $e->getCode()]);
+        } catch (\DomainException $e) {
+            Log::error("Erro ao Cadastrar um Ticket" . $e->getMessage(), ['code' => $e->getCode()]);
             return $this->error($e->getMessage(), $e->getCode());
         }
 
@@ -166,10 +165,10 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function show(string $tickedId,GetTicketByIdAction $action)
+    public function show(string $tickedId, GetTicketByIdAction $action):JsonResponse
     {
         $ticket = $action->execute($tickedId);
-        if($ticket){
+        if ($ticket) {
             return $this->response('Ticket encontrado com sucesso', 200, new TicketResource($ticket));
         }
 
@@ -214,21 +213,16 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, string $ticketId, UpdateTicketByIdAction $action):JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'quantity' => 'nullable|integer',
-            'situation' => 'nullable|in:A,I',
-        ]);
-
-        if($validator->fails()){
-            return $this->error('Dados Inválidos', 422, $validator->errors());
-        }
-        if($ticket->update($validator->validated())){
+        try {
+            $ticket = $action->execute($request, $ticketId);
+            Log::info('Ticket atualizado com sucesso', ['ticket' => $ticket]);
             return $this->response('Ticket atualizado com sucesso', 200, new TicketResource($ticket));
+        } catch (\DomainException $e) {
+            Log::error("Erro ao Atualizar um Ticket" . $e->getMessage(), ['code' => $e->getCode()]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
-
-        return $this->error('Erro ao atualizar ticket', 400);
 
     }
 
@@ -261,14 +255,14 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function destroy(string $ticketId, DeleteTicketAction $action)
+    public function destroy(string $ticketId, DeleteTicketAction $action):JsonResponse
     {
-        try{
+        try {
             $action->execute($ticketId);
             Log::info('Ticket deletado com sucesso', ['ticket_id' => $ticketId]);
             return $this->response('Ticket deletado com sucesso', 204);
-        }catch (\DomainException $e){
-            Log::error("Erro ao deletar um Ticket".$e->getMessage(), ['code' => $e->getCode()]);
+        } catch (\DomainException $e) {
+            Log::error("Erro ao deletar um Ticket" . $e->getMessage(), ['code' => $e->getCode()]);
             return $this->error($e->getMessage(), $e->getCode());
         }
 
