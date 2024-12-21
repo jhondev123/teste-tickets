@@ -35,24 +35,24 @@ services:
 
     api1:
         build:
-            context: ./api
+            context: ./teste-tickets-back
             dockerfile: ./docker/Dockerfile
         container_name: api1
         networks:
             - teste-tickets
         volumes:
-            - ./api/docker/entrypoint.sh:/app/docker/entrypoint.sh
+            - ./teste-tickets-back/docker/entrypoint.sh:/app/docker/entrypoint.sh
         entrypoint: [ "sh", "/app/docker/entrypoint.sh" ]
 
     api2:
         build:
-            context: ./api
+            context: ./teste-tickets-back
             dockerfile: ./docker/Dockerfile
         container_name: api2
         networks:
             - teste-tickets
         volumes:
-            - ./api/docker/entrypoint.sh:/app/docker/entrypoint.sh
+            - ./teste-tickets-back/docker/entrypoint.sh:/app/docker/entrypoint.sh
         entrypoint: [ "sh", "/app/docker/entrypoint.sh" ]
 
 

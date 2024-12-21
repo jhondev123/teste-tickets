@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6e22a659-a02f-47b7-bde9-1a9ee01043f9" name="Changes" comment="feat: configurando funcionamento local" />
+    <list default="true" id="6e22a659-a02f-47b7-bde9-1a9ee01043f9" name="Changes" comment="feat: configurando funcionamento local">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -318,7 +322,7 @@
       <workItem from="1734571663278" duration="4237000" />
       <workItem from="1734650380602" duration="4990000" />
       <workItem from="1734690257759" duration="927000" />
-      <workItem from="1734798898553" duration="9121000" />
+      <workItem from="1734798898553" duration="9446000" />
     </task>
     <task id="LOCAL-00001" summary="feat: arrumando bug nos testes">
       <option name="closed" value="true" />
