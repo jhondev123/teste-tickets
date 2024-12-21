@@ -1,0 +1,62 @@
+services:
+    pgsql:
+        image: postgres
+        container_name: pgsql
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - "5432:5432"
+        networks:
+            - teste-tickets
+        depends_on:
+            - api1
+            - api2
+            - nginx
+
+    nginx:
+        image: nginx
+        container_name: nginx
+        ports:
+            - "80:80"
+            - "8000:8000"
+            - "8001:8001"
+            - "8002:8002"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/load-balancer.conf:/etc/nginx/load-balancer.conf
+            - ./nginx/apis.conf:/etc/nginx/apis.conf
+        networks:
+            - teste-tickets
+        depends_on:
+            - api1
+            - api2
+
+    api1:
+        build:
+            context: ./api
+            dockerfile: ./docker/Dockerfile
+        container_name: api1
+        networks:
+            - teste-tickets
+        volumes:
+            - ./api/docker/entrypoint.sh:/app/docker/entrypoint.sh
+        entrypoint: [ "sh", "/app/docker/entrypoint.sh" ]
+
+    api2:
+        build:
+            context: ./api
+            dockerfile: ./docker/Dockerfile
+        container_name: api2
+        networks:
+            - teste-tickets
+        volumes:
+            - ./api/docker/entrypoint.sh:/app/docker/entrypoint.sh
+        entrypoint: [ "sh", "/app/docker/entrypoint.sh" ]
+
+
+
+networks:
+    teste-tickets:
+        driver: bridge
