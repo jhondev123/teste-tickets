@@ -1,0 +1,6 @@
+[submodule "teste-tickets-front"]
+	path = teste-tickets-front
+	url = https://github.com/jhondev123/teste-tickets-front.git
+[submodule "teste-tickets-back"]
+	path = teste-tickets-back
+	url = https://github.com/jhondev123/teste-tickets-back.git
