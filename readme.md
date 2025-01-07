@@ -1,3 +1,9 @@
+# URLS
+- SWAGGER <https://app.swaggerhub.com/apis-docs/JHONATTANCURTARELLI1/tickets-api/1.0.0>
+- APP em produção <https://teste-tickets-front.vercel.app/>
+- A API em si está na URL <https://teste-tickets-api.projetos.jhonattancurtarelli.com.br/api/v1/>
+Essa URL não vai conter nada, os endpoints tente /tickets ou /employees
+
 # INFRA
 
 ## Tecnologias
@@ -27,6 +33,7 @@
   compatibilidade dos dois é muito boa
 - Depois de instalado é só clonar o repositório e rodar o comando `docker-compose up --build` ele vai
   baixar as imagens das tecs usadas e subir os containers de forma automática
+- Depois de subir tudo é só jogar no navegador <http://localhost> e o sistema vai estar rodando
 
 ## Sistema em Produção?
 - Sim o sistema está funcionando em produção também, eu possuo uma VPS com CAPROVER instalado nela, assim subi
@@ -35,7 +42,7 @@
 
 ## Postman
 - Além da documentação via SWAGGER, vou disponibilizar um arquivo de collection do postman para facilitar
-  tanto o arquivo da collectiom quando o arquivo do enviroment que contém a URL da API configurada
+  tanto o arquivo da collection quando o arquivo do enviroment que contém a URL da API configurada
 
 ## Git
 - Para trabalhar com 2 repositórios separados ao mesmo tempo e juntar os dois em um terceiro eu usei
