@@ -31,7 +31,8 @@ Essa URL não vai conter nada, os endpoints tente /tickets ou /employees
 - Para rodar vai precisar ter em sua máquina o docker e o docker-compose
   Caso não tenha e esteja usando windows, recomendo instalar o WSL2 primeiro e depois o docker, pois a
   compatibilidade dos dois é muito boa
-- Depois de instalado é só clonar o repositório e rodar o comando `docker-compose up --build` ele vai
+- Depois de instalado é só clonar o repositório com `git clone --recurse-submodules https://github.com/jhondev123/teste-tickets` 
+e rodar o comando `docker-compose up --build` ele vai
   baixar as imagens das tecs usadas e subir os containers de forma automática
 - Depois de subir tudo é só jogar no navegador <http://localhost> e o sistema vai estar rodando
 
